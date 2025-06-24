@@ -1,1 +1,780 @@
-Generatore di fiabe strutturate secondo la Morfologia di Propp
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  
+<meta name="copyright" content="© 2025 [universalis.it]. Tutti i diritti riservati.">
+<meta name="author" content="[Simone Macelloni]">
+<meta name="description" content="Contenuti protetti dal diritto d'autore, archiviati con data certa su web.archive.org.">
+
+
+<meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FabulaDeck – Generatore di Fiabe Proppiane</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #fffaf5;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #f5b642;
+      color: #000;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+
+    .controls {
+      text-align: center;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    button {
+      background: #f5a623;
+      border: none;
+      color: white;
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #e39113;
+    }
+
+    .highlight {
+      background-color: #e63946;
+      font-weight: bold;
+    }
+
+    .highlight:hover {
+      background-color: #c92d3a;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card h2 {
+      color: #b85b00;
+      margin-top: 0;
+    }
+
+    .card p {
+      margin: 0.3rem 0;
+    }
+
+    .prompt {
+      font-style: italic;
+      color: #666;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-top: 4rem;
+      padding-bottom: 2rem;
+	  
+	  .simbolo {
+  font-size: 1.5rem;
+  margin-right: 0.4rem;
+  vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🃏 FabulaDeck</h1>
+    <p>Generatore di fiabe strutturate secondo la Morfologia di Propp</p>
+  </header>
+
+  <div class="container">
+    <div class="controls">
+      <button onclick="generaFiabaPropp()" class="highlight">🛠 Genera Fiaba</button>
+      </div>
+     <div class="controls">
+<button onclick="mostraTutte()">📚 Tutte le Funzioni</button>
+      <button onclick="mostraCarte('personaggi')">🧍‍♂️ Personaggi</button>
+      <button onclick="mostraCarte('situazioni')">🏞 Situazioni</button>
+      <button onclick="mostraCarte('simboli')">🧠 Temi</button>
+      <button onclick="mostraCarte('combinatorie')">🎲 Regole</button>
+      <button onclick="mostraCarte('strutture')">🧱 Strutture</button>
+    </div>
+    <div id="output"></div>
+  </div>
+
+  <footer>
+    © 2025 universalis.it - Simone Macelloni  <br> Contenuti protetti e archiviati su web.archive.org <br>Vietata la riproduzione.
+  </footer>
+
+
+<script>
+const carte = {
+funzioni: [
+  {
+    titolo: "Situazione iniziale [i]",
+    simbolo: "🏰",
+    descrizione: "Presentazione del mondo, dei personaggi e dello stato di equilibrio iniziale.",
+    esempio: "Descrivi dove ci troviamo, chi c’è, e com’è la vita prima del cambiamento.",
+    prompt: "Qual è l’equilibrio iniziale?",
+    varianti: [
+      { codice: "i1", descrizione: "Un mondo ordinario e quotidiano." },
+      { codice: "i2", descrizione: "Un regno magico in equilibrio apparente." },
+      { codice: "i3", descrizione: "Un’ambientazione in crisi silenziosa." },
+      { codice: "i4", descrizione: "L’eroe è solo, orfano o isolato." },
+      { codice: "i5", descrizione: "L’eroe è amato ma incompreso." },
+      { codice: "i6", descrizione: "Falsa normalità, in attesa del cambiamento." },
+      { codice: "i7", descrizione: "Profezia o sogno che annuncia un destino." },
+      { codice: "i8", descrizione: "Ambiente repressivo o tradizionalista." },
+      { codice: "i9", descrizione: "Rivalità latente nella famiglia o nel villaggio." },
+      { codice: "i10", descrizione: "L’eroe vive sotto falsa identità o in esilio." }
+    ]
+  },
+  {
+    titolo: "Allontanamento [e]",
+    simbolo: "🚶‍♂️",
+    descrizione: "Un personaggio si allontana dalla scena iniziale.",
+    esempio: "Chi lascia la scena? È cacciato, parte o sparisce?",
+    prompt: "Chi si allontana e perché?",
+    varianti: [
+      { codice: "e1", descrizione: "Partenza volontaria per cercare fortuna." },
+      { codice: "e2", descrizione: "Espulsione per punizione o colpa apparente." },
+      { codice: "e3", descrizione: "Allontanamento simbolico (morte, sogno, sparizione)." },
+      { codice: "e4", descrizione: "Viene mandato via per salvarlo o proteggerlo." },
+      { codice: "e5", descrizione: "Fuga da un pericolo incombente." }
+    ]
+  },
+  {
+    titolo: "Divieto [q]",
+    simbolo: "⛔",
+    descrizione: "All’eroe viene imposto un divieto o una regola.",
+    esempio: "Un avvertimento da non disattendere: non entrare, non toccare, non parlare.",
+    prompt: "Che regola non deve essere infranta?",
+    varianti: [
+      { codice: "q1", descrizione: "Divieto imposto da un genitore, re o guida." },
+      { codice: "q2", descrizione: "Divieto simbolico o morale." },
+      { codice: "q3", descrizione: "Divieto tramite oggetto, sogno o presagio." },
+      { codice: "q4", descrizione: "Divieto legato a una profezia o maledizione." }
+    ]
+  },
+  {
+    titolo: "Violazione [b]",
+    simbolo: "⚠️",
+    descrizione: "Il divieto viene infranto.",
+    esempio: "Il personaggio disobbedisce e il mondo cambia.",
+    prompt: "Chi infrange il divieto e perché?",
+    varianti: [
+      { codice: "b1", descrizione: "Violazione volontaria per curiosità o sfida." },
+      { codice: "b2", descrizione: "Violazione accidentale o ingenua." },
+      { codice: "b3", descrizione: "Violazione per inganno, manipolazione o errore." },
+      { codice: "b4", descrizione: "Altri infrangono il divieto e l’eroe paga le conseguenze." }
+    ]
+  },
+
+  {
+    titolo: "Danneggiamento [A]",
+    simbolo: "💥",
+    descrizione: "Il nemico causa un danno o una perdita significativa.",
+    esempio: "Qualcuno distrugge l’equilibrio: rapimento, furto, maledizione.",
+    prompt: "Che tipo di danno viene inflitto?",
+    varianti: [
+      { codice: "A1", descrizione: "Rapimento di una persona amata o importante." },
+      { codice: "A2", descrizione: "Distruzione o furto di un oggetto sacro o magico." },
+      { codice: "A3", descrizione: "Devastazione ambientale o del villaggio." },
+      { codice: "A4", descrizione: "Malattia o oscuramento del sole/luna." },
+      { codice: "A5", descrizione: "Maledizione lanciata su qualcuno o qualcosa." },
+      { codice: "A6", descrizione: "Tradimento da parte di un alleato." },
+      { codice: "A7", descrizione: "Rivelazione che qualcuno non è chi dice di essere." }
+    ]
+  },
+  {
+    titolo: "Mancanza [a]",
+    simbolo: "🕳️",
+    descrizione: "Un oggetto, persona o qualità importante è assente.",
+    esempio: "Qualcosa manca fin dall’inizio o viene meno improvvisamente.",
+    prompt: "Cosa manca al mondo iniziale?",
+    varianti: [
+      { codice: "a1", descrizione: "Mancanza di un figlio, partner o genitore." },
+      { codice: "a2", descrizione: "Assenza di giustizia o felicità." },
+      { codice: "a3", descrizione: "Oggetto o eredità non trasmessi." },
+      { codice: "a4", descrizione: "Verità nascosta o mistero irrisolto." },
+      { codice: "a5", descrizione: "Profezia in attesa di compiersi." }
+    ]
+  },
+  {
+    titolo: "Missione [B]",
+    simbolo: "📜",
+    descrizione: "Viene assegnato all’eroe un compito o una sfida.",
+    esempio: "L’eroe riceve un incarico per riparare il danno o colmare la mancanza.",
+    prompt: "Chi assegna la missione e perché?",
+    varianti: [
+      { codice: "B1", descrizione: "Missione imposta da un re, un genitore o un anziano." },
+      { codice: "B2", descrizione: "Chiamata interiore o sogno profetico." },
+      { codice: "B3", descrizione: "Sfida morale o vendetta personale." },
+      { codice: "B4", descrizione: "Richiesta da parte di un essere magico o un animale parlante." }
+    ]
+  },
+  {
+    titolo: "Partenza [↑]",
+    simbolo: "🧭",
+    descrizione: "L’eroe lascia casa per l’impresa.",
+    esempio: "Abbandona il conosciuto per entrare nell’ignoto.",
+    prompt: "Cosa lo spinge ad agire?",
+    varianti: [
+      { codice: "↑1", descrizione: "Partenza solenne: saluto alla famiglia o cerimonia." },
+      { codice: "↑2", descrizione: "Fuga improvvisa per mettersi in salvo." },
+      { codice: "↑3", descrizione: "Spinto da un evento improvviso o soprannaturale." },
+      { codice: "↑4", descrizione: "Parte di nascosto per dimostrare il proprio valore." },
+      { codice: "↑5", descrizione: "Lascito simbolico: porta con sé un oggetto, un ricordo o una maledizione." }
+    ]
+  },
+  {
+    titolo: "Prova del Donatore [D]",
+    simbolo: "🎭",
+    descrizione: "Una figura mette l’eroe alla prova.",
+    esempio: "Una creatura misteriosa, un anziano o un essere magico testa l’eroe.",
+    prompt: "Quale virtù viene testata?",
+    varianti: [
+      { codice: "D1", descrizione: "L’eroe aiuta un essere debole o in difficoltà." },
+      { codice: "D2", descrizione: "Risponde con sincerità o gentilezza a una richiesta." },
+      { codice: "D3", descrizione: "Sceglie l’oggetto giusto tra più possibilità." },
+      { codice: "D4", descrizione: "Rispetta un rituale, una formula o un simbolo sacro." },
+      { codice: "D5", descrizione: "Supera una prova enigmatica o logica." },
+      { codice: "D6", descrizione: "Resiste a una tentazione o provocazione." },
+      { codice: "D7", descrizione: "Concede perdono invece di vendetta." },
+      { codice: "D8", descrizione: "Accetta l’aiuto senza sapere se fidarsi." }
+    ]
+  },
+  {
+    titolo: "Reazione dell’Eroe [G]",
+    simbolo: "🧠",
+    descrizione: "L’eroe reagisce alla prova.",
+    esempio: "Mostra il suo coraggio, astuzia o umiltà.",
+    prompt: "Cosa rivela il suo comportamento?",
+    varianti: [
+      { codice: "G1", descrizione: "Si sacrifica per il bene di altri." },
+      { codice: "G2", descrizione: "Risponde con umiltà o gentilezza a un test difficile." },
+      { codice: "G3", descrizione: "Svela la verità quando potrebbe mentire." },
+      { codice: "G4", descrizione: "Affronta la paura senza esitazione." },
+      { codice: "G5", descrizione: "Dimostra compassione o comprensione verso un nemico." }
+    ]
+  },
+  {
+    titolo: "Oggetto Magico [Z]",
+    simbolo: "✨",
+    descrizione: "L’eroe riceve un oggetto soprannaturale.",
+    esempio: "Un dono magico lo aiuterà nel viaggio o nello scontro.",
+    prompt: "Quale dono riceve?",
+    varianti: [
+      { codice: "Z1", descrizione: "Uno specchio rivelatore o un talismano." },
+      { codice: "Z2", descrizione: "Una spada incantata o arma unica." },
+      { codice: "Z3", descrizione: "Un mantello invisibile o mezzo per volare." },
+      { codice: "Z4", descrizione: "Oggetto vivente che parla o agisce da solo." },
+      { codice: "Z5", descrizione: "Oggetto che funziona solo se usato con cuore puro." },
+      { codice: "Z6", descrizione: "Chiave per accedere a un regno segreto." },
+      { codice: "Z7", descrizione: "Oggetto legato al destino dell’eroe o del nemico." }
+    ]
+  },
+  {
+    titolo: "Trasferimento [R]",
+    simbolo: "🛩️",
+    descrizione: "L’eroe viene trasportato nel luogo dell’azione.",
+    esempio: "Un mezzo magico o evento lo conduce nella fase decisiva.",
+    prompt: "Quale passaggio straordinario compie?",
+    varianti: [
+      { codice: "R1", descrizione: "Attraversa una porta, soglia o portale magico." },
+      { codice: "R2", descrizione: "Viene trasportato da un animale o oggetto magico." },
+      { codice: "R3", descrizione: "Attraversa una prova naturale (fiume, fuoco, labirinto)." },
+      { codice: "R4", descrizione: "Sogna un luogo e si risveglia lì." }
+    ]
+  },
+  {
+    titolo: "Scontro [Q]",
+    simbolo: "⚔️",
+    descrizione: "L’eroe affronta il nemico.",
+    esempio: "Il confronto diretto o simbolico con il male.",
+    prompt: "Come si svolge lo scontro?",
+    varianti: [
+      { codice: "Q1", descrizione: "Combattimento diretto con spada o poteri." },
+      { codice: "Q2", descrizione: "Sfida di intelligenza, logica o enigmi." },
+      { codice: "Q3", descrizione: "Lotta simbolica (luce contro oscurità, amore contro odio)." },
+      { codice: "Q4", descrizione: "Il nemico tenta di corrompere o ingannare." },
+      { codice: "Q5", descrizione: "Lo scontro avviene in un sogno, visione o altro mondo." }
+    ]
+  },
+
+  {
+    titolo: "Marchiatura [K]",
+    simbolo: "🔖",
+    descrizione: "L’eroe riceve un segno distintivo.",
+    esempio: "Un segno, una cicatrice o un oggetto prova chi è davvero.",
+    prompt: "Come verrà riconosciuto?",
+    varianti: [
+      { codice: "K1", descrizione: "Cicatrice o marchio visibile ottenuto in battaglia." },
+      { codice: "K2", descrizione: "Oggetto simbolico (anello, medaglione, simbolo ereditario)." },
+      { codice: "K3", descrizione: "Segno magico che brilla o cambia colore." },
+      { codice: "K4", descrizione: "Marchio che può essere visto solo da chi ha fede." },
+      { codice: "K5", descrizione: "Ferita o perdita che è diventata una prova di valore." }
+    ]
+  },
+  {
+    titolo: "Vittoria [M]",
+    simbolo: "🏆",
+    descrizione: "L’eroe sconfigge il nemico.",
+    esempio: "Il momento in cui il conflitto si risolve a favore dell’eroe.",
+    prompt: "Come vince l’eroe?",
+    varianti: [
+      { codice: "M1", descrizione: "Con la forza e il coraggio." },
+      { codice: "M2", descrizione: "Grazie all’ingegno o a un trucco." },
+      { codice: "M3", descrizione: "Con il potere dell’oggetto magico." },
+      { codice: "M4", descrizione: "Grazie al sacrificio di un alleato." },
+      { codice: "M5", descrizione: "L’antagonista si arrende o si converte." }
+    ]
+  },
+  {
+    titolo: "Riparazione [N]",
+    simbolo: "🛠️",
+    descrizione: "Il danno viene riparato.",
+    esempio: "Ciò che era stato distrutto o perduto viene ristabilito.",
+    prompt: "Cosa viene restituito?",
+    varianti: [
+      { codice: "N1", descrizione: "La persona rapita è liberata e torna a casa." },
+      { codice: "N2", descrizione: "L’oggetto magico è recuperato o riparato." },
+      { codice: "N3", descrizione: "L’equilibrio sociale o naturale viene ristabilito." },
+      { codice: "N4", descrizione: "Il mondo viene purificato dal male." },
+      { codice: "N5", descrizione: "Una verità importante viene finalmente rivelata." }
+    ]
+  },
+  {
+    titolo: "Ritorno [↓]",
+    simbolo: "🏡",
+    descrizione: "L’eroe torna a casa.",
+    esempio: "Il viaggio termina e l’eroe torna nel suo mondo.",
+    prompt: "Come cambia al ritorno?",
+    varianti: [
+      { codice: "↓1", descrizione: "Torna gloriosamente acclamato dal popolo." },
+      { codice: "↓2", descrizione: "Torna in incognito per osservare prima di rivelarsi." },
+      { codice: "↓3", descrizione: "Torna cambiato e irriconoscibile." },
+      { codice: "↓4", descrizione: "Il ritorno è difficile o ostacolato da nuove prove." },
+      { codice: "↓5", descrizione: "Torna portando una nuova saggezza." }
+    ]
+  },
+  {
+    titolo: "Persecuzione [Pr]",
+    simbolo: "🚨",
+    descrizione: "Qualcuno cerca di fermare l’eroe anche dopo la vittoria.",
+    esempio: "Il nemico non è ancora del tutto sconfitto o si presenta un nuovo ostacolo.",
+    prompt: "Chi ostacola il ritorno?",
+    varianti: [
+      { codice: "Pr1", descrizione: "Inseguimento da parte del nemico sopravvissuto." },
+      { codice: "Pr2", descrizione: "Trappola finale, apparentemente innocua." },
+      { codice: "Pr3", descrizione: "Falso alleato lo tradisce durante il ritorno." },
+      { codice: "Pr4", descrizione: "Evento naturale ostacola il cammino (tempesta, buio, labirinto)." },
+      { codice: "Pr5", descrizione: "Il mondo iniziale rifiuta l’eroe cambiato." }
+    ]
+  },
+  {
+    titolo: "Salvataggio [Sp]",
+    simbolo: "🕊️",
+    descrizione: "Un aiuto imprevisto salva l’eroe nel momento critico.",
+    esempio: "Un alleato o un potere magico interviene all’ultimo momento.",
+    prompt: "Chi interviene in suo favore?",
+    varianti: [
+      { codice: "Sp1", descrizione: "Un animale, oggetto o spirito salvifico interviene." },
+      { codice: "Sp2", descrizione: "L’oggetto magico si attiva autonomamente." },
+      { codice: "Sp3", descrizione: "Il personaggio salvato prima ora ricambia." },
+      { codice: "Sp4", descrizione: "Intervento del destino o della natura." }
+    ]
+  },
+  {
+    titolo: "Arrivo in incognito [°]",
+    simbolo: "🕵️‍♂️",
+    descrizione: "L’eroe ritorna senza farsi riconoscere subito.",
+    esempio: "Si nasconde per osservare o per rivelarsi al momento giusto.",
+    prompt: "Come si nasconde?",
+    varianti: [
+      { codice: "°1", descrizione: "Travestimento totale o magia che lo trasforma." },
+      { codice: "°2", descrizione: "Si finge mendicante, folle o servitore." },
+      { codice: "°3", descrizione: "È presente ma non parla della sua identità." },
+      { codice: "°4", descrizione: "Nessuno lo riconosce perché è cambiato." }
+    ]
+  },
+  {
+    titolo: "Falsità del falso eroe [F]",
+    simbolo: "🎭",
+    descrizione: "Un impostore si prende i meriti al posto dell’eroe.",
+    esempio: "Qualcuno cerca di usurpare l’identità o il ruolo dell’eroe.",
+    prompt: "Chi mente?",
+    varianti: [
+      { codice: "F1", descrizione: "Il fratello o rivale si finge eroe." },
+      { codice: "F2", descrizione: "Una figura di potere sostiene il falso eroe." },
+      { codice: "F3", descrizione: "L’eroe viene accusato ingiustamente." },
+      { codice: "F4", descrizione: "Il nemico si finge redento e prende il merito." }
+    ]
+  },
+  {
+    titolo: "Compito difficile [S]",
+    simbolo: "🧩",
+    descrizione: "Una nuova sfida viene posta per dimostrare il valore dell’eroe.",
+    esempio: "L’eroe deve superare un’ultima prova per essere riconosciuto.",
+    prompt: "Cosa lo mette ancora alla prova?",
+    varianti: [
+      { codice: "S1", descrizione: "Sollevare, recuperare o riparare un oggetto simbolico." },
+      { codice: "S2", descrizione: "Risolvere un enigma pubblico." },
+      { codice: "S3", descrizione: "Dimostrare un valore personale davanti alla folla." },
+      { codice: "S4", descrizione: "Scoprire la verità su un evento passato." }
+    ]
+  },
+  {
+    titolo: "Superamento del compito [A2]",
+    simbolo: "✔️",
+    descrizione: "L’eroe riesce a superare la sfida finale.",
+    esempio: "L’ultima prova è vinta e la verità emerge.",
+    prompt: "Come dimostra di essere degno?",
+    varianti: [
+      { codice: "A2.1", descrizione: "Grazie all’oggetto magico o al marchio." },
+      { codice: "A2.2", descrizione: "Con parole ispirate o azioni nobili." },
+      { codice: "A2.3", descrizione: "Con il riconoscimento pubblico di un alleato o testimone." }
+    ]
+  },
+  {
+    titolo: "Riconoscimento [Y]",
+    simbolo: "🔍",
+    descrizione: "L’eroe viene finalmente riconosciuto per ciò che è.",
+    esempio: "Tutti scoprono la sua vera identità e meriti.",
+    prompt: "Chi lo riconosce?",
+    varianti: [
+      { codice: "Y1", descrizione: "Un personaggio svela la verità al pubblico." },
+      { codice: "Y2", descrizione: "Un oggetto o simbolo parla per lui." },
+      { codice: "Y3", descrizione: "Il nemico confessa." },
+      { codice: "Y4", descrizione: "Il re/la regina riconosce le sue gesta." }
+    ]
+  },
+  {
+    titolo: "Smascheramento [Sm]",
+    simbolo: "❗",
+    descrizione: "Il falso eroe viene smascherato.",
+    esempio: "L’inganno è svelato e l’impostore viene punito.",
+    prompt: "Chi rivela la verità?",
+    varianti: [
+      { codice: "Sm1", descrizione: "L’eroe stesso mostra le prove." },
+      { codice: "Sm2", descrizione: "Il falso eroe sbaglia o si contraddice." },
+      { codice: "Sm3", descrizione: "Un aiutante o testimone interviene." },
+      { codice: "Sm4", descrizione: "Magia o sogno rivela l’inganno." }
+    ]
+  },
+  {
+    titolo: "Trasfigurazione [T]",
+    simbolo: "🦋",
+    descrizione: "L’eroe cambia condizione o aspetto.",
+    esempio: "Nuova identità: regale, spirituale, luminosa.",
+    prompt: "Come appare cambiato?",
+    varianti: [
+      { codice: "T1", descrizione: "Appare con abiti regali o luce simbolica." },
+      { codice: "T2", descrizione: "È fisicamente trasformato." },
+      { codice: "T3", descrizione: "Ha nuova voce, gesto o potere." },
+      { codice: "T4", descrizione: "Il popolo lo vede con nuovi occhi." }
+    ]
+  },
+  
+  {
+    titolo: "Nozze o incoronazione [C*]",
+    simbolo: "👑",
+    descrizione: "Ricompensa finale dell’eroe.",
+    esempio: "L’unione simbolica o sociale che conclude la fiaba.",
+    prompt: "Cosa ottiene infine?",
+    varianti: [
+      { codice: "C*1", descrizione: "Matrimonio con la principessa o compagna simbolica." },
+      { codice: "C*2", descrizione: "Viene incoronato o riceve un titolo." },
+      { codice: "C*3", descrizione: "Fonda un nuovo regno, ordine o famiglia." },
+      { codice: "C*4", descrizione: "Dona il potere ad altri e si ritira in pace." }
+   ]
+  }
+],
+
+  personaggi: [
+    { titolo: "L’Eroe", descrizione: "Colui che affronta le prove e si trasforma.", esempio: "Il giovane pastore che salva il regno.", prompt: "Cosa rende il tuo eroe degno di fiducia?" },
+    { titolo: "L’Antagonista", descrizione: "Oppositore principale che ostacola la missione.", esempio: "La strega, il drago, il fratello geloso.", prompt: "Cosa lo spinge a nuocere?" },
+    { titolo: "Il Donatore", descrizione: "Figura che offre un mezzo magico o guida.", esempio: "Un vecchio saggio con oggetti preziosi.", prompt: "Perché offre aiuto?" },
+    { titolo: "L’Aiutante", descrizione: "Aiuta l’eroe a superare ostacoli.", esempio: "Un animale parlante, un compagno leale.", prompt: "Come supporta l’eroe?" },
+    { titolo: "La Principessa", descrizione: "Oggetto del desiderio o co-eroina.", esempio: "La principessa intrappolata.", prompt: "Che ruolo gioca oltre l’amore?" },
+    { titolo: "Il Mandante", descrizione: "Figura che lancia la missione.", esempio: "Il re, il vecchio saggio, la madre morente.", prompt: "Cosa lo motiva?" },
+    { titolo: "Il Falso Eroe", descrizione: "Personaggio che si prende i meriti dell’eroe.", esempio: "Il fratello che mente per ottenere gloria.", prompt: "Come viene scoperto?" }
+  ],
+
+  simboli: [
+    { titolo: "Desiderio inappagato", descrizione: "Il bisogno profondo dell’eroe non ancora espresso.", esempio: "Essere accettato, amato, compreso.", prompt: "Cosa manca davvero dentro?" },
+    { titolo: "Maschera sociale", descrizione: "Apparenza diversa dalla realtà.", esempio: "Il principe che si finge mendicante.", prompt: "Cosa si nasconde sotto il ruolo?" },
+    { titolo: "Conflitto interiore", descrizione: "Due parti dell’eroe si combattono.", esempio: "Paura vs coraggio, odio vs perdono.", prompt: "Chi vincerà dentro di lui?" },
+    { titolo: "Identità nascosta", descrizione: "Chi sei davvero? Nemmeno tu lo sai.", esempio: "Scopre di essere il figlio del nemico.", prompt: "Cosa cambia sapendo la verità?" },
+    { titolo: "Colpa e redenzione", descrizione: "Qualcosa va riparato moralmente.", esempio: "Deve chiedere perdono o fare giustizia.", prompt: "Quale ferita chiede cura?" },
+    { titolo: "Specchio o doppio", descrizione: "Un alter ego o nemico speculare.", esempio: "Il gemello perduto, il lato oscuro.", prompt: "Chi è il riflesso?" },
+    { titolo: "Destino o scelta", descrizione: "Fato ineluttabile o libero arbitrio?", esempio: "Una profezia si avvera.", prompt: "È tutto già scritto?" },
+    { titolo: "Vuoto e silenzio", descrizione: "Ciò che manca parla più di ciò che c’è.", esempio: "Un luogo abbandonato, una lettera mai spedita.", prompt: "Cosa non viene detto?" }
+  ],
+
+  situazioni: [
+    { titolo: "Esordio misterioso", descrizione: "Origine ignota o evento inspiegabile.", esempio: "Un bambino trovato nel bosco.", prompt: "Da dove arriva il mistero?" },
+    { titolo: "Sogno o visione", descrizione: "Segnale onirico che guida l’azione.", esempio: "Un drago lo chiama in sogno.", prompt: "È vero o simbolico?" },
+    { titolo: "Segreto di famiglia", descrizione: "Verità taciute che cambiano tutto.", esempio: "Scopre chi era davvero suo padre.", prompt: "Cosa succede quando si scopre?" },
+    { titolo: "Tradimento", descrizione: "Un alleato si rivela un nemico.", esempio: "Il compagno lo vende al nemico.", prompt: "Chi tradisce e perché?" },
+    { titolo: "Rito di passaggio", descrizione: "Transizione simbolica verso una nuova identità.", esempio: "Tre giorni nella grotta.", prompt: "Cosa lascia dietro di sé?" },
+    { titolo: "Allontanamento forzato", descrizione: "Cacciato o costretto a partire.", esempio: "Esiliato per un crimine non commesso.", prompt: "Cosa gli viene tolto?" },
+    { titolo: "Doppia identità", descrizione: "Due ruoli, due verità, una scelta.", esempio: "È principe e contadino insieme.", prompt: "Qual è il vero volto?" },
+    { titolo: "Viaggio interiore", descrizione: "La trasformazione accade dentro.", esempio: "Impara a perdonare sé stesso.", prompt: "Cosa trova nel silenzio?" }
+  ],
+
+  combinatorie: [
+    { titolo: "Fiaba al contrario", descrizione: "Si parte dal finale e si risale all’inizio.", esempio: "Il regno è salvo… ma come ci siamo arrivati?", prompt: "Cosa succede se si svela subito la fine?" },
+    { titolo: "Fiaba muta", descrizione: "Nessun dialogo: solo azioni, immagini, simboli.", esempio: "Il protagonista non parla mai.", prompt: "Cosa si capisce senza parole?" },
+    { titolo: "Fiaba collettiva", descrizione: "Ogni segmento è scritto da una persona diversa.", esempio: "Un capitolo per autore.", prompt: "Come cambia il tono e la coerenza?" },
+    { titolo: "Fiaba nel tempo", descrizione: "Più epoche narrate in una singola struttura.", esempio: "Padre nel passato, figlia nel futuro.", prompt: "Come si intrecciano le generazioni?" },
+    { titolo: "Una sola scena", descrizione: "Tutta la storia in un solo luogo o istante.", esempio: "Una sala del trono, un letto d’ospedale.", prompt: "Cosa può contenere un solo spazio?" },
+    { titolo: "Tre personaggi, una scelta", descrizione: "L’eroe deve scegliere un solo aiuto.", esempio: "Un leone, una volpe o un gufo.", prompt: "Cosa rivela la scelta?" }
+  ],
+
+  strutture: [
+    { titolo: "Fiaba doppia", descrizione: "Due cicli completi di missione e ritorno.", esempio: "Due fratelli, due viaggi, due prove.", prompt: "Qual è il legame tra i due percorsi?" },
+    { titolo: "Fiaba specchio", descrizione: "Percorsi simmetrici di due personaggi.", esempio: "Eroe e falso eroe a confronto.", prompt: "Cosa insegna lo specchio?" },
+    { titolo: "Fiaba circolare", descrizione: "La fine richiama l’inizio, come un ciclo.", esempio: "Il figlio ripete il viaggio del padre.", prompt: "Cosa torna su sé stesso?" },
+    { titolo: "Fiaba a staffetta", descrizione: "L’eroe inizia, un altro completa.", esempio: "Un padre muore, il figlio finisce il viaggio.", prompt: "Chi eredita la missione?" },
+    { titolo: "Fiaba frammentata", descrizione: "Struttura non lineare, tra salti e flashback.", esempio: "Il finale è all’inizio, ma incompleto.", prompt: "Quale ordine scegli di narrare?" }
+  ]
+};
+</script>
+
+<script>
+function scegli(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+function rispettaVincoli(funzioni) {
+  const titoli = funzioni.map(f => f.titolo);
+
+  const coppieObbligatorie = [
+    ["Divieto [q]", "Violazione [b]"],
+    ["Prova del Donatore [D]", "Oggetto Magico [Z]"],
+    ["Scontro [Q]", "Vittoria [M]"],
+    ["Marchiatura [K]", "Riconoscimento [Y]"],
+    ["Persecuzione [Pr]", "Salvataggio [Sp]"]
+  ];
+
+  coppieObbligatorie.forEach(([f1, f2]) => {
+    const haF1 = titoli.includes(f1);
+    const haF2 = titoli.includes(f2);
+    if (haF1 && !haF2) {
+      const funzione = carte.funzioni.find(f => f.titolo === f2);
+      if (funzione) funzioni.push({ ...funzione, variante: scegli(funzione.varianti) });
+    }
+    if (!haF1 && haF2) {
+      const funzione = carte.funzioni.find(f => f.titolo === f1);
+      if (funzione) funzioni.push({ ...funzione, variante: scegli(funzione.varianti) });
+    }
+  });
+
+  return funzioni;
+}
+
+function generaFiabaPropp() {
+  const output = document.getElementById('output');
+  output.innerHTML = '';
+
+  const funzioneBySigla = sigla => carte.funzioni.find(f => f.titolo.includes(`[${sigla}]`));
+  let fiaba = [];
+
+  // Situazione iniziale obbligatoria
+  const iniziale = funzioneBySigla("i");
+  if (iniziale) fiaba.push({ ...iniziale, variante: scegli(iniziale.varianti) });
+
+  // Fase di squilibrio (casuale)
+  if (Math.random() < 0.6) {
+    const e = funzioneBySigla("e");
+    if (e) fiaba.push({ ...e, variante: scegli(e.varianti) });
+  }
+
+  if (Math.random() < 0.5) {
+    const q = funzioneBySigla("q");
+    const b = funzioneBySigla("b");
+    if (q) fiaba.push({ ...q, variante: scegli(q.varianti) });
+    if (b) fiaba.push({ ...b, variante: scegli(b.varianti) });
+  }
+
+  // Scelta struttura narrativa: Q–M, S–A2 o entrambe
+  const usaQM = Math.random() < 0.7;
+  const usaSA2 = Math.random() < 0.5;
+
+  // Missione centrale
+  const missione = ["A", "a", "B", "↑", "D", "G", "Z", "R"];
+  missione.forEach(sigla => {
+    const f = funzioneBySigla(sigla);
+    if (f && Math.random() < 0.85) {
+      fiaba.push({ ...f, variante: scegli(f.varianti) });
+    }
+  });
+
+  if (usaQM) {
+    const fQ = funzioneBySigla("Q");
+    const fM = funzioneBySigla("M");
+    if (fQ) fiaba.push({ ...fQ, variante: scegli(fQ.varianti) });
+    if (fM) fiaba.push({ ...fM, variante: scegli(fM.varianti) });
+  }
+
+  // Ritorno e ostacoli
+  ["N", "↓", "Pr", "Sp", "°"].forEach(sigla => {
+    const f = funzioneBySigla(sigla);
+    if (f && Math.random() < 0.7) {
+      fiaba.push({ ...f, variante: scegli(f.varianti) });
+    }
+  });
+
+  if (usaSA2) {
+    ["S", "A2"].forEach(sigla => {
+      const f = funzioneBySigla(sigla);
+      if (f) fiaba.push({ ...f, variante: scegli(f.varianti) });
+    });
+  }
+
+  // Falso eroe e smascheramento
+  if (Math.random() < 0.5) {
+    ["F", "Sm"].forEach(sigla => {
+      const f = funzioneBySigla(sigla);
+      if (f) fiaba.push({ ...f, variante: scegli(f.varianti) });
+    });
+  }
+
+  // Conclusione
+  ["Y", "T", "C*"].forEach(sigla => {
+    const f = funzioneBySigla(sigla);
+    if (f && !fiaba.find(x => x.titolo === f.titolo)) {
+      fiaba.push({ ...f, variante: scegli(f.varianti) });
+    }
+  });
+
+  // Eventuale secondo ciclo narrativo (fiaba specchio)
+  if (Math.random() < 0.3) {
+    const ciclo2 = ["a", "B", "↑", "D", "G", "Z", "Q", "M", "↓"];
+    ciclo2.forEach(sigla => {
+      const f = funzioneBySigla(sigla);
+      if (f) fiaba.push({
+        ...f,
+        variante: scegli(f.varianti),
+        titolo: f.titolo + " (secondo ciclo)"
+      });
+    });
+  }
+
+  // Applica vincoli obbligatori
+  fiaba = rispettaVincoli(fiaba);
+
+  // Ordina le funzioni per sequenza canonica
+  const ordine = [
+    "i", "e", "q", "b", "A", "a", "B", "↑", "D", "G", "Z", "R", "Q", "K", "M", "N", "↓",
+    "Pr", "Sp", "°", "F", "S", "A2", "Y", "Sm", "T", "C*"
+  ];
+
+  const fiabaFinale = ordine
+    .map(sigla => fiaba.find(f => f.titolo.includes(`[${sigla}]`)))
+    .filter(Boolean);
+
+  // Visualizza formula narrativa
+  const formula = document.createElement('div');
+  const formulaSequenza = fiabaFinale.map(f =>
+    f.variante?.codice || f.titolo.match(/\[(.*?)\]/)[1]
+  );
+  formula.innerHTML = `<div class="card"><strong>📜 Formula narrativa:</strong> (${formulaSequenza.join(', ')})</div>`;
+  output.appendChild(formula);
+
+  // Visualizza le carte
+  
+  const narrazione = document.createElement('div');
+  narrazione.className = 'card';
+  narrazione.innerHTML = "<h2>📖 Narrazione della Fiaba [BETA]</h2>";
+  let testo = "";
+
+  fiabaFinale.forEach(f => {
+    const codice = f.variante?.codice || f.titolo;
+    const desc = f.variante?.descrizione || f.descrizione;
+    if (f.titolo.toLowerCase().includes("iniziale")) testo += "Nel principio, " + desc.toLowerCase() + ". ";
+    else if (f.titolo.toLowerCase().includes("allontanamento")) testo += "Poi, " + desc.toLowerCase() + ". ";
+    else if (f.titolo.toLowerCase().includes("divieto")) testo += "Un divieto fu stabilito: " + desc.toLowerCase() + ". ";
+    else if (f.titolo.toLowerCase().includes("violazione")) testo += "Tuttavia, " + desc.toLowerCase() + ". ";
+    else if (f.titolo.toLowerCase().includes("danneggiamento") || f.titolo.toLowerCase().includes("mancanza")) testo += "Accadde allora che " + desc.toLowerCase() + ". ";
+    else if (f.titolo.toLowerCase().includes("missione")) testo += "L’eroe fu incaricato: " + desc.toLowerCase() + ". ";
+    else if (f.titolo.toLowerCase().includes("partenza")) testo += "Così, partì: " + desc.toLowerCase() + ". ";
+    else if (f.titolo.toLowerCase().includes("prova del donatore") || f.titolo.toLowerCase().includes("reazione dell’eroe")) testo += "Nel cammino, " + desc.toLowerCase() + ". ";
+    else if (f.titolo.toLowerCase().includes("oggetto magico")) testo += "E ricevette qualcosa di speciale: " + desc.toLowerCase() + ". ";
+    else if (f.titolo.toLowerCase().includes("scontro")) testo += "Giunse infine il momento della sfida: " + desc.toLowerCase() + ". ";
+    else if (f.titolo.toLowerCase().includes("vittoria")) testo += "E vinse, poiché " + desc.toLowerCase() + ". ";
+    else if (f.titolo.toLowerCase().includes("ritorno") || f.titolo.toLowerCase().includes("riparazione")) testo += "Tornato a casa, " + desc.toLowerCase() + ". ";
+    else if (f.titolo.toLowerCase().includes("riconoscimento") || f.titolo.toLowerCase().includes("trasfigurazione")) testo += "Fu riconosciuto, perché " + desc.toLowerCase() + ". ";
+    else if (f.titolo.toLowerCase().includes("nozze") || f.titolo.toLowerCase().includes("incoronazione")) testo += "E così, " + desc.toLowerCase() + ". ";
+  });
+
+  narrazione.innerHTML += "<p>" + testo.trim() + "</p>";
+  output.insertBefore(narrazione, output.children[1]);
+
+  fiabaFinale.forEach(f => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <h2><span class="simbolo">${f.simbolo || "🧩"}</span> ${f.titolo}</h2>
+      <p><strong>${f.variante ? f.variante.descrizione : f.descrizione}</strong></p>
+      <p class="prompt">${f.prompt}</p>
+      <p><em>${f.esempio}</em></p>
+    `;
+    output.appendChild(card);
+  });
+}
+
+function mostraTutte() {
+  mostraCarte('funzioni');
+}
+
+function mostraCarte(categoria) {
+  const output = document.getElementById('output');
+  output.innerHTML = '';
+  const sezione = carte[categoria];
+
+  sezione.forEach(carta => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <h2>${carta.titolo}</h2>
+      <p>${carta.descrizione}</p>
+      <p class="prompt">${carta.prompt}</p>
+      <p><em>${carta.esempio}</em></p>
+    `;
+    output.appendChild(card);
+  });
+}
+</script>
+</body>
+</html>
+
+
+
+
